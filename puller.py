@@ -33,6 +33,15 @@ class Database:
         self.cur.execute(query)
         self.connection.commit()  
 
+    def delete_tables(self):
+        queries = [
+            "DROP TABLE IF EXISTS chars;",
+            "DROP TABLE IF EXISTS stats;"
+        ]
+        for query in queries:
+            self.cur.execute(query)
+        self.connection.commit()
+
 def pull_data_from_api(api_url, table_name, columns_mapping):
     response = requests.get(api_url)
 
@@ -73,6 +82,7 @@ def get_modules():
 
 db = Database(config.host, config.user, config.password, config.database)
 
+db.delete_tables()
 for table_query in config.tables:
     db.create_table(table_query)
 

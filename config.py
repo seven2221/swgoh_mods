@@ -1,7 +1,10 @@
+BOT_API_TOKEN = ''
+
 host = '127.0.0.1'
+database = 'swgoh'
 user = 'swgoh'
 password = 'swgoh'
-database = 'swgoh'
+root_password = 'mauFJcuf5dhRMQrjj'
 
 tables = [
     """CREATE TABLE IF NOT EXISTS stats (
@@ -22,4 +25,3 @@ tables = [
 stats_api = "https://swgoh.gg/api/stat-definitions/"
 chars_api = "https://swgoh.gg/api/characters/"
 mods_api = "https://swgoh.gg/api/character/{char_id}/best-mods/"
-
