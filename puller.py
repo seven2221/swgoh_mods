@@ -15,6 +15,7 @@ class Database:
     def create_table(self, query):
         try:
             self.cur.execute(query)
+            print("Table created")
         except Exception as e:
             print(f"Error creating table: {query}")
             print(f"Error message: {str(e)}")
@@ -39,7 +40,12 @@ class Database:
             "DROP TABLE IF EXISTS stats;"
         ]
         for query in queries:
-            self.cur.execute(query)
+            try:
+                self.cur.execute(query)
+                print("Table deleted")
+            except:
+                print(f"Error creating table: {query}")
+                print(f"Error message: {str(e)}")
         self.connection.commit()
 
 def pull_data_from_api(api_url, table_name, columns_mapping):
@@ -91,3 +97,5 @@ pull_data_from_api(config.chars_api, 'chars', {'name': 'char_name', 'base_id': '
 get_modules()
 
 db.connection.close()
+
+print("Filling db is finished")

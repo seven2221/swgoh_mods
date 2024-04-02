@@ -1,10 +1,10 @@
-BOT_API_TOKEN = ''
+BOT_API_TOKEN = "***"
 
-host = '127.0.0.1'
-database = 'swgoh'
-user = 'swgoh'
-password = 'swgoh'
-root_password = 'mauFJcuf5dhRMQrjj'
+host = "mysql"
+database = "swgoh"
+user = "swgoh"
+password = "swgoh"
+root_password = "mauFJcuf5dhRMQrjj"
 
 tables = [
     """CREATE TABLE IF NOT EXISTS stats (

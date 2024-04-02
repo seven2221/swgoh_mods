@@ -1,1 +1,1 @@
-# swgoh_mods
+A small telegram bot that helps weed out unnecessary mods

@@ -1,37 +1,43 @@
 version: '3.8'
 
 services:
-  db:
+  mysql:
+    hostname: mysql
     image: mysql:8.1
-    cap_add:
-      - SYS_NICE
     restart: always
     environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: 'swgoh'
+      MYSQL_USER: 'swgoh'
+      MYSQL_PASSWORD: 'swgoh'
+      MYSQL_ROOT_PASSWORD: 'mauFJcuf5dhRMQrjj'
     ports:
       - '3306:3306'
+    expose: 
+      - '3306'
     volumes:
       - db:/var/lib/mysql
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      swgoh-network:
+        aliases:
+          - mysql
 
   bot:
+    hostname: bot
     restart: always
     build: .
-    working_dir: /bot
-    volumes:
-      - .:/bot
     environment:
-      - BOT_API_TOKEN=${BOT_API_TOKEN}
+      BOT_API_TOKEN: '***'
     depends_on:
-      - db
-    links:
-      - db
-    command: python main.py
+      - mysql
+    networks: 
+      - swgoh-network
 
 volumes:
   db:
     driver: local
 
+networks:
+  swgoh-network:    
+    driver: bridge
+    name: swgoh-network

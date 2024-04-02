@@ -1,5 +1,10 @@
-FROM python:3.6
+FROM python:slim
 
 COPY requirements.txt .
-RUN pip3.6 install -r ./requirements.txt --use-feature=2020-resolver
+COPY bot.py .
+COPY config.py .
+COPY puller.py .
 
+RUN pip install -r ./requirements.txt
+
+CMD python puller.py && python bot.py;

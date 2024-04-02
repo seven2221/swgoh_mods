@@ -1,75 +1,77 @@
-from aiogram import Bot, Dispatcher, types
-from aiogram.contrib.middlewares.logging import LoggingMiddleware
-from aiogram.types import ReplyKeyboardMarkup
+import telebot
 import pymysql
+import config
 
-bot = Bot(token="YOUR_TELEGRAM_BOT_TOKEN")
-dp = Dispatcher(bot)
-logging_middleware = LoggingMiddleware()
-dp.middleware.setup(logging_middleware)
+# Подключение к БД MySQL
+db_connection = pymysql.connect(
+    host=config.host,
+    user=config.user,
+    password=config.password,
+    database=config.database
+)
+db_cursor = db_connection.cursor()
 
-# Create connection to your MySQL database
-connection = pymysql.connect(host="localhost",
-                             user="your_username",
-                             password="your_password",
-                             database="your_database",
-                             autocommit=True)
-cursor = connection.cursor()
+# Инициализация бота
+bot = telebot.TeleBot(config.BOT_API_TOKEN)
+bot.delete_webhook()
 
-# Keyboards for different menus
-menu1_keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-menu1_keyboard.add("Стрелка", "Крест", "Круг", "Треугольник")
+@bot.message_handler(commands=['start'])
+def start(message):
+    markup1 = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup1.add('Стрелка', 'Крест', 'Круг', 'Треугольник')
+    bot.send_message(message.chat.id, "Выберите тип модуля:", reply_markup=markup1)
 
-menu2_options = {
-    "Стрелка": {"Скорость": 5, "%атаки": 48, "%обороны": 49, "%здоровья": 55, "%защиты": 56, "Избегание крита": 54},
-    "Треугольник": {"Критшанс": 53, "Критурон": 16, "%атаки": 48, "%обороны": 49, "%здоровья": 55, "%защиты": 56},
-    "Круг": {"%здоровья": 55, "%защиты": 56},
-    "Крест": {"Эффективность": 17, "Стойкость": 9, "%атаки": 48, "%обороны": 49, "%здоровья": 55, "%защиты": 56}
-}
+@bot.message_handler(func=lambda message: message.text in ['Стрелка', 'Крест', 'Круг', 'Треугольник'])
+def choose_param1(message):
+    global param1
+    param1 = message.text.lower()
+    if param1 == 'стрелка':
+        param2_options = ['Скорость', '%Атаки', '%Обороны', '%Здоровья', '%Защиты', 'Избегание крита']
+    elif param1 == 'крест':
+        param2_options = ['Эффективность', 'Стойкость', '%Атаки', '%Обороны', '%Здоровья', '%Защиты']
+    elif param1 == 'круг':
+        param2_options = ['%Здоровья', '%Защиты']
+    else:  # треугольник
+        param2_options = ['Критшанс', 'Критурон', '%Атаки', '%Обороны', '%Здоровья', '%Защиты']
 
-menu3_options = {"Здоровье": 1, "Оборона": 3, "Критурон": 6, "Критшанс": 5, "Стойкость": 8, "Атака": 2, "Эффективность": 7, "Скорость": 4}
+    markup2 = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+    for option in param2_options:
+        markup2.add(option)
+    bot.send_message(message.chat.id, "Выберите характеристику модуля:", reply_markup=markup2)
 
-
-@dp.message_handler(commands=['start'])
-async def start(message: types.Message):
-    await message.answer("Выберите параметр1:", reply_markup=menu1_keyboard)
-
-
-@dp.message_handler(lambda message: message.text in menu2_options.keys())
-async def choose_param2(message: types.Message):
-    param1 = message.text
-    await message.answer("Выберите параметр2:", reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(*menu2_options[param1].keys()))
-    await ChooseParam2.next()
-
-
-@dp.message_handler(lambda message: message.text in menu3_options.keys())
-async def choose_param3(message: types.Message):
-    param2 = message.text
-    await message.answer("Выберите параметр3:", reply_markup=ReplyKeyboardMarkup(resize_keyboard=True).add(*menu3_options.keys()))
-    await ChooseParam3.next()
-
-
-@dp.message_handler(lambda message: message.text in menu3_options.keys())
-async def process_results(message: types.Message):
-    param3 = message.text
-    param1_sql = {"Стрелка": "arrow", "Крест": "cross", "Треугольник": "triangle", "Круг": "circle"}
-    param2_val = menu2_options[param1][param2]
-    param3_val = menu3_options[param3]
+@bot.message_handler(func=lambda message: message.text in ['%Здоровья', '%Защиты', 'Скорость', '%Атаки', '%Обороны', 'Избегание крита', 'Критшанс', 'Критурон', 'Эффективность', 'Стойкость'])
+def choose_param2(message):
+    global param2
+    param2 = message.text.lower()
     
-    # Execute MySQL query
-    query = f"SELECT char_name FROM chars WHERE {param1_sql[param1]}={param2_val} AND sets LIKE '%{param3_val}%'"
-    cursor.execute(query)
-    results = cursor.fetchall()
+    markup3 = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+    param3_options = ['Здоровье', 'Оборона', 'Критурон', 'Критшанс', 'Стойкость', 'Атака', 'Эффективность', 'Скорость']
+    for option in param3_options:
+        markup3.add(option)
+    bot.send_message(message.chat.id, "Выберите сет модуля:", reply_markup=markup3)
 
+@bot.message_handler(func=lambda message: message.text in ['Здоровье', 'Оборона', 'Критурон', 'Критшанс', 'Стойкость', 'Атака', 'Эффективность', 'Скорость'])
+def choose_param3(message):
+    param3_dict = {'Здоровье': 1, 'Оборона': 3, 'Критурон': 6, 'Критшанс': 5, 'Стойкость': 8, 'Атака': 2, 'Эффективность': 7, 'Скорость': 4}
+    param3 = param3_dict[message.text]
+
+    # Формирование и выполнение запроса SQL
+    query_param1 = {'стрелка': 'arrow', 'крест': 'cross', 'треугольник': 'triangle', 'круг': 'circle'}
+    query_param2 = {'скорость': 5, '%атаки': 48, '%обороны': 49, '%здоровья': 55, '%защиты': 56, 'избегание крита': 54,
+                    'критшанс': 53, 'критурон': 16, 'эффективность': 17, 'стойкость': 9}
+    query_param3 = {'атака': 2, 'эффективность': 7, 'скорость': 4, 'здоровье': 1, 'стойкость': 8, 'критшанс': 5,
+                    'критурон': 6, 'оборона': 3}
+
+    sql_query = f"SELECT char_name FROM chars WHERE `{query_param1[param1]}`='{query_param2[param2]}' and `sets` like '%{query_param3[message.text.lower()]}%'"
+    db_cursor.execute(sql_query)
+
+    results = db_cursor.fetchall()  # Получаем результаты из базы данных
     if results:
-        char_names = [result[0] for result in results]
-        await message.answer(f"Результаты по вашему запросу: {', '.join(char_names)}")
+        result_message = "Список персонажей, которым может подойти такой модуль:\n"
+        for result in results:
+            result_message += result[0] + '\n'
+        bot.send_message(message.chat.id, result_message)
     else:
-        await message.answer("Нет результатов по вашему запросу.")
+        bot.send_message(message.chat.id, "Такой модуль никем не используется.")
 
-if __name__ == "__main__":
-    import asyncio
-    from aiogram import executor
-
-    loop = asyncio.get_event_loop()
-    executor.start_polling(dp, loop=loop)
+bot.polling()
