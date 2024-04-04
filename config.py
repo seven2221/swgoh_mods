@@ -1,5 +1,11 @@
-BOT_API_TOKEN = "***"
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+
+token = os.getenv('BOT_API_TOKEN')
+
+#db
 host = "mysql"
 database = "swgoh"
 user = "swgoh"

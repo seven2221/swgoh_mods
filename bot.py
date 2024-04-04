@@ -12,7 +12,7 @@ db_connection = pymysql.connect(
 db_cursor = db_connection.cursor()
 
 # Инициализация бота
-bot = telebot.TeleBot(config.BOT_API_TOKEN)
+bot = telebot.TeleBot(config.token)
 bot.delete_webhook()
 
 bot.set_my_commands([
@@ -68,7 +68,7 @@ def choose_param3(message):
 
     results = db_cursor.fetchall()  # Получаем результаты из базы данных
     if results:
-        result_message = "Список персонажей, которым может подойти такой модуль:\n"
+        result_message = "Список персонажей, которым может подойти такой модуль:\n\n"
         for result in results:
             result_message += result[0] + '\n'
         bot.send_message(message.chat.id, result_message)
