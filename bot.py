@@ -49,7 +49,7 @@ def choose_param2(message):
     markup3 = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
     markup3.add('➕ Здоровье', '🛡️ Оборона', '❗️ Критурон', '❌ Критшанс', '✊ Стойкость', '💥 Атака', '🎯 Эффективность', '🏃 Скорость')
     # markup3.add(telebot.types.InlineKeyboardButton('Заново', commands=['start']))
-    bot.send_message(message.chat.id, "Выберите тип модуля:", reply_markup=markup3)
+    bot.send_message(message.chat.id, "Выберите сет модуля:", reply_markup=markup3)
 
 @bot.message_handler(func=lambda message: message.text in ['➕ Здоровье', '🛡️ Оборона', '❗️ Критурон', '❌ Критшанс', '✊ Стойкость', '💥 Атака', '🎯 Эффективность', '🏃 Скорость'])
 def choose_param3(message):
