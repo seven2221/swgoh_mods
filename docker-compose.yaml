@@ -26,7 +26,7 @@ services:
 
   puller:
     hostname: puller
-    restart: always
+    restart: on-failure
     build:
       context: .
       dockerfile: Dockerfile

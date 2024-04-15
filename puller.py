@@ -55,7 +55,7 @@ def pull_data_from_api(api_url, table_name, columns_mapping):
         data = response.json()
 
         for record in data:
-            formatted_data = {columns_mapping[key]: record[key] for key in columns_mapping}
+            formatted_data = {columns_mapping[key]: str(record[key]) for key in columns_mapping}
             db.insert_data(table_name, formatted_data)
     else:
         print(f"Error fetching data from API for {table_name}")
@@ -93,7 +93,7 @@ for table_query in config.tables:
     db.create_table(table_query)
 
 pull_data_from_api(config.stats_api, 'stats', {'stat_name': 'stat_name', 'stat_id': 'stat_id'})
-pull_data_from_api(config.chars_api, 'chars', {'name': 'char_name', 'base_id': 'char_id'})
+pull_data_from_api(config.chars_api, 'chars', {'name': 'char_name', 'base_id': 'char_id', 'categories': 'categories'})
 get_modules()
 
 db.connection.close()
