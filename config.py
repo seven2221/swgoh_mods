@@ -12,10 +12,10 @@ user = "swgoh"
 password = "swgoh"
 root_password = "mauFJcuf5dhRMQrjj"
 
-tables = [
+create_tables_queries = [
     """CREATE TABLE IF NOT EXISTS stats (
-        stat_name VARCHAR(255),
-        stat_id VARCHAR(255)
+        `stat_name` VARCHAR(255),
+        `stat_id` VARCHAR(255)
     )""",
     """CREATE TABLE IF NOT EXISTS chars (
         `char_name` VARCHAR(255),
@@ -26,7 +26,16 @@ tables = [
         `cross` VARCHAR(255),
         `circle` VARCHAR(255),
         `arrow` VARCHAR(255)
+    )""",
+    """CREATE TABLE IF NOT EXISTS categories (
+        `category` VARCHAR(255)
     )"""
+]
+
+delete_tables_queries = [
+    "DROP TABLE IF EXISTS chars;",
+    "DROP TABLE IF EXISTS stats;",
+    "DROP TABLE IF EXISTS categories;"
 ]
 
 # api 
