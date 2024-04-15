@@ -24,10 +24,25 @@ services:
         timeout: 20s
         retries: 10    
 
+  puller:
+    hostname: puller
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: puller
+    depends_on:
+      - mysql
+    networks:
+      - swgoh-network
+
   bot:
     hostname: bot
     restart: always
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: bot
     environment:
       BOT_API_TOKEN: ${BOT_API_TOKEN}
     depends_on:
