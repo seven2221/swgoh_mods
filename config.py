@@ -44,13 +44,13 @@ chars_api = "https://swgoh.gg/api/characters/"
 mods_api = "https://swgoh.gg/api/character/{char_id}/best-mods/"
 
 # modules maps
-modules_param1 = {
+module_form_map = {
     'стрелка': 'arrow',
     'крест': 'cross',
     'треугольник': 'triangle',
     'круг': 'circle'
 }
-modules_param2 = {
+module_stats_map = {
     'скорость': 5,
     '%атаки': 48,
     '%обороны': 49,
@@ -62,7 +62,7 @@ modules_param2 = {
     '%эффективности': 17,
     '%стойкости': 9
 }
-modules_param3 = {
+module_sets_map = {
     '💥 атака': 2,
     '🎯 эффективность': 7,
     '🏃 скорость': 4,
