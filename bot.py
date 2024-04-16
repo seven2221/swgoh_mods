@@ -97,7 +97,7 @@ def create_recommendation_handler(chosen_category):
             '3': '🛡️ оборона'
         }
         try:
-            sql_query = f"SELECT `sets`, `triangle`, `circle`, `cross`, `arrow` FROM chars WHERE char_name='{chosen_character}'"
+            sql_query = f'SELECT `sets`, `triangle`, `circle`, `cross`, `arrow` FROM chars WHERE char_name="{chosen_character}"'
             db_cursor.execute(sql_query)
             character_stats = db_cursor.fetchone()
             if character_stats:
