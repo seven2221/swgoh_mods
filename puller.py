@@ -2,6 +2,7 @@ import logging
 import requests
 import pymysql
 import config
+import re
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -59,6 +60,9 @@ class Database:
                 logging.error(f"Error message: {str(e)}")
         self.connection.commit()
 
+def remove_special_characters(text):
+    return re.sub(r'[\'\"]', '', text)
+
 def pull_data_from_api(api_url, table_name, columns_mapping):
     logging.info(f"Fetching data from API: {api_url}")
     response = requests.get(api_url)
@@ -66,7 +70,7 @@ def pull_data_from_api(api_url, table_name, columns_mapping):
     if response.status_code == 200:
         data = response.json()
         for record in data:
-            formatted_data = {columns_mapping[key]: str(record.get(key)) for key in columns_mapping}
+            formatted_data = {columns_mapping[key]: remove_special_characters(str(record.get(key))) for key in columns_mapping}
             db.insert_data(table_name, formatted_data)
         logging.info(f"Data fetched from API and inserted into table {table_name}")
     else:
